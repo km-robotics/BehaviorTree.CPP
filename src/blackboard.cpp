@@ -223,7 +223,8 @@ std::shared_ptr<Blackboard::Entry> Blackboard::createEntryImpl(const std::string
       auto msg = StrCat("Blackboard entry [", key,
                         "]: once declared, the type of a port"
                         " shall not change. Previously declared type [",
-                        BT::demangle(prev_info.type()), "], current type [",
+                        BT::demangle(prev_info.type()),
+                        "], attempt type [",
                         BT::demangle(info.type()), "]");
 
       throw LogicError(msg);

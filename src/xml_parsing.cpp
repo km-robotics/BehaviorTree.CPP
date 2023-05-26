@@ -15,6 +15,7 @@
 #include <functional>
 #include <iostream>
 #include <list>
+#include <map>
 #include <sstream>
 #include <string>
 #include <typeindex>
@@ -30,7 +31,6 @@
 #pragma GCC diagnostic ignored "-Wattributes"
 #endif
 
-#include <map>
 #include "behaviortree_cpp/xml_parsing.h"
 #include "tinyxml2/tinyxml2.h"
 #include <filesystem>
@@ -76,7 +76,7 @@ std::string xsdAttributeType(const BT::PortInfo& port_info)
   return std::string();
 }
 
-}  // namespace
+} // Anonymous workspace
 
 namespace BT
 {

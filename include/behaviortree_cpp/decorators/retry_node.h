@@ -31,15 +31,11 @@ namespace BT
  * <RetryUntilSuccessful num_attempts="3">
  *     <OpenDoor/>
  * </RetryUntilSuccessful>
- *
- * Note:
- * RetryNodeTypo is only included to support the deprecated typo
- * "RetryUntilSuccesful" (note the single 's' in Succesful)
  */
 class RetryNode : public DecoratorNode
 {
 public:
-  RetryNode(const std::string& name, int NTries);
+  RetryNode(const std::string& name, int n_tries);
 
   RetryNode(const std::string& name, const NodeConfig& config);
 
@@ -56,7 +52,7 @@ public:
 private:
   int max_attempts_;
   int try_count_;
-  bool all_skipped_ = true;
+  bool child_skipped_ = true;
 
   bool read_parameter_from_ports_;
   static constexpr const char* NUM_ATTEMPTS = "num_attempts";
@@ -64,17 +60,4 @@ private:
   virtual BT::NodeStatus tick() override;
 };
 
-class [[deprecated("RetryUntilSuccesful was a typo and deprecated, use "
-                   "RetryUntilSuccessful "
-                   "instead.")]] RetryNodeTypo : public RetryNode
-{
-public:
-  RetryNodeTypo(const std::string& name, int NTries) : RetryNode(name, NTries){};
-
-  RetryNodeTypo(const std::string& name, const NodeConfig& config)
-    : RetryNode(name, config){};
-
-  virtual ~RetryNodeTypo() override = default;
-};
-
-}  // namespace BT
+}   // namespace BT
