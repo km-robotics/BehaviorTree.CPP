@@ -5,7 +5,7 @@
 
 #include "behaviortree_cpp/bt_factory.h"
 
-inline BT::NodeStatus TestTick(int* tick_counter)
+inline BT::NodeStatus testTick(int* tick_counter)
 {
   (*tick_counter)++;
   return BT::NodeStatus::SUCCESS;
@@ -18,11 +18,11 @@ inline void RegisterTestTick(BT::BehaviorTreeFactory& factory,
 {
   for(size_t i = 0; i < tick_counters.size(); i++)
   {
-    tick_counters[i] = false;
+    tick_counters[i] = 0;
     char str[100];
     snprintf(str, sizeof str, "%s%c", name_prefix.c_str(), char('A' + i));
     int* counter_ptr = &(tick_counters[i]);
-    factory.registerSimpleAction(str, std::bind(&TestTick, counter_ptr));
+    factory.registerSimpleAction(str, std::bind(&testTick, counter_ptr));
   }
 }
 

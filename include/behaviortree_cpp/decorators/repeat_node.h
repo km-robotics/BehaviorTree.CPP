@@ -35,7 +35,7 @@ namespace BT
 class RepeatNode : public DecoratorNode
 {
 public:
-  RepeatNode(const std::string& name, int NTries);
+  RepeatNode(const std::string& name, int num_cycles);
 
   RepeatNode(const std::string& name, const NodeConfig& config);
 
