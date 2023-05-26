@@ -42,8 +42,8 @@ NodeStatus DelayNode::tick()
 
     timer_id_ = timer_.add(std::chrono::milliseconds(msec_), [this](bool aborted) {
       std::unique_lock<std::mutex> lk(delay_mutex_);
-      delay_complete_ = (!aborted);
-      if(!aborted)
+      delay_complete_ = !aborted;
+      if (!aborted)
       {
         emitWakeUpSignal();
       }
@@ -60,8 +60,8 @@ NodeStatus DelayNode::tick()
   }
   else if (delay_complete_)
   {
-    auto child_status = child()->executeTick();
-    if(child_status != NodeStatus::RUNNING)
+    const NodeStatus child_status = child()->executeTick();
+    if (isStatusCompleted(child_status))
     {
       delay_started_ = false;
       delay_aborted_ = false;
