@@ -63,7 +63,7 @@ NodeStatus DelayNode::tick()
   if(delay_complete_)
   {
     const NodeStatus child_status = child()->executeTick();
-    if(isStatusCompleted(child_status))
+    if (isStatusCompleted(child_status))
     {
       delay_started_ = false;
       delay_aborted_ = false;
