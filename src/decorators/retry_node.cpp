@@ -15,9 +15,9 @@
 
 namespace BT
 {
-RetryNode::RetryNode(const std::string& name, int NTries)
+RetryNode::RetryNode(const std::string& name, int n_tries)
   : DecoratorNode(name, {})
-  , max_attempts_(NTries)
+  , max_attempts_(n_tries)
   , try_count_(0)
   , read_parameter_from_ports_(false)
 {
@@ -73,7 +73,7 @@ NodeStatus RetryNode::tick()
 
         // Return the execution flow if the child is async,
         // to make this interruptible.
-        if(requiresWakeUp() && prev_status == NodeStatus::IDLE && do_loop)
+        if (requiresWakeUp() && (prev_status == NodeStatus::IDLE) && do_loop)
         {
           emitWakeUpSignal();
           return NodeStatus::RUNNING;

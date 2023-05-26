@@ -24,6 +24,7 @@
 #include "behaviortree_cpp/utils/strcat.hpp"
 
 #include <memory>
+#include <stdexcept>
 #include <string>
 #include <type_traits>
 #include <typeindex>
@@ -363,7 +364,7 @@ inline void Any::copyInto(Any& dst) const
 
   const auto& dst_type = dst.castedType();
 
-  if((castedType() == dst_type) || (isString() && dst.isString()))
+  if ((castedType() == dst_type) || (isString() && dst.isString()))
   {
     dst._any = _any;
   }
@@ -433,7 +434,8 @@ inline nonstd::expected<T, std::string> Any::stringToNumber() const
   }
   else
   {
-    return nonstd::make_unexpected("Any failed string to number conversion");
+    return nonstd::make_unexpected("Any failed string to number conversion from '" +
+        str.toStdString() + "'");
   }
 #else
   try
@@ -512,7 +514,7 @@ inline nonstd::expected<DST, std::string> Any::convert(EnableArithmetic<DST>) co
 template <typename T>
 inline nonstd::expected<T, std::string> Any::tryCast() const
 {
-  static_assert(!std::is_reference<T>::value, "Any::cast uses value semantic, "
+  static_assert(!std::is_reference<T>::value, "Any::tryCast uses value semantic, "
                                               "can not cast to reference");
 
   if(_any.empty())
@@ -526,7 +528,7 @@ inline nonstd::expected<T, std::string> Any::tryCast() const
   }
 
   // special case when the output is an enum.
-  // We will try first a int conversion
+  // We will try first an int conversion
   if constexpr(std::is_enum_v<T>)
   {
     if(isNumber())

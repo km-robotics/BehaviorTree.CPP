@@ -16,9 +16,9 @@
 namespace BT
 {
 
-RepeatNode::RepeatNode(const std::string& name, int NTries)
+RepeatNode::RepeatNode(const std::string& name, int num_cycles)
   : DecoratorNode(name, {})
-  , num_cycles_(NTries)
+  , num_cycles_(num_cycles)
   , repeat_count_(0)
   , read_parameter_from_ports_(false)
 {
@@ -54,13 +54,13 @@ NodeStatus RepeatNode::tick()
     {
       case NodeStatus::SUCCESS: {
         repeat_count_++;
-        do_loop = repeat_count_ < num_cycles_ || num_cycles_ == -1;
+        do_loop = (repeat_count_ < num_cycles_) || (num_cycles_ == -1);
 
         resetChild();
 
         // Return the execution flow if the child is async,
         // to make this interruptible.
-        if(requiresWakeUp() && prev_status == NodeStatus::IDLE && do_loop)
+        if (requiresWakeUp() && (prev_status == NodeStatus::IDLE) && do_loop)
         {
           emitWakeUpSignal();
           return NodeStatus::RUNNING;
@@ -71,7 +71,7 @@ NodeStatus RepeatNode::tick()
       case NodeStatus::FAILURE: {
         repeat_count_ = 0;
         resetChild();
-        return (NodeStatus::FAILURE);
+        return NodeStatus::FAILURE;
       }
 
       case NodeStatus::RUNNING: {

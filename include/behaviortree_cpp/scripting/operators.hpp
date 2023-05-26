@@ -124,7 +124,7 @@ struct ExprUnaryArithmetic : ExprBase
     if(rhs_v.isNumber())
     {
       const double rv = rhs_v.cast<double>();
-      switch(op)
+      switch (op)
       {
         case negate:
           return Any(-rv);
@@ -280,7 +280,7 @@ struct ExprBinaryArithmetic : ExprBase
         }
       }
     }
-    else if(rhs_v.isString() && lhs_v.isString() && op == plus)
+    else if (rhs_v.isString() && lhs_v.isString() && op == plus)
     {
       return Any(lhs_v.cast<std::string>() + rhs_v.cast<std::string>());
     }
@@ -594,11 +594,11 @@ struct ExprAssignment : ExprBase
         {
           value.copyInto(*dst_ptr);
         }
-        catch(std::exception&)
+        catch(std::exception& e)
         {
           auto msg = StrCat(errorPrefix(), "\nThe right operand has type [",
                             BT::demangle(value.type()), "] and can't be converted to [",
-                            BT::demangle(dst_ptr->type()), "]");
+                            BT::demangle(dst_ptr->type()), "]: ", e.what());
           throw RuntimeError(msg);
         }
       }

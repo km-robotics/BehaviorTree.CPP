@@ -17,6 +17,7 @@
 #include <functional>
 #include <iostream>
 #include <list>
+#include <map>
 #include <sstream>
 #include <string>
 #include <tuple>
@@ -84,7 +85,7 @@ std::string xsdAttributeType(const BT::PortInfo& port_info)
   return std::string();
 }
 
-}  // namespace
+} // Anonymous workspace
 
 namespace BT
 {
