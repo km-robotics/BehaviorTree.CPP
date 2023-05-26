@@ -69,7 +69,7 @@ NodeStatus RetryNode::tick()
         try_count_++;
         // Refresh max_attempts_ in case it changed in one of the child nodes
         getInput(NUM_ATTEMPTS, max_attempts_);
-        do_loop = try_count_ < max_attempts_ || max_attempts_ == -1;
+        do_loop = (try_count_ < max_attempts_) || (max_attempts_ == -1);
 
         resetChild();
 

@@ -42,7 +42,7 @@ NodeStatus RepeatNode::tick()
     }
   }
 
-  bool do_loop = repeat_count_ < num_cycles_ || num_cycles_ == -1;
+  bool do_loop = (repeat_count_ < num_cycles_) || (num_cycles_ == -1);
   setStatus(NodeStatus::RUNNING);
 
   while(do_loop)
