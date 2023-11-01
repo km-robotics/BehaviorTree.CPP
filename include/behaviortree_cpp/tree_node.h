@@ -92,6 +92,8 @@ struct NodeConfig
   PortsRemapping input_ports;
   // output ports
   PortsRemapping output_ports;
+  // Node content (in the XML sense).
+  std::string xml_content;
 
   // Any other attributes found in the xml that are not parsed as ports
   // or built-in identifier (e.g. anything with a leading '_')
