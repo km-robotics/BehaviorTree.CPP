@@ -84,6 +84,8 @@ struct NodeConfig
   PortsRemapping input_ports;
   // output ports
   PortsRemapping output_ports;
+  // Node content (in the XML sense).
+  std::string xml_content;
 
   const TreeNodeManifest* manifest = nullptr;
 
