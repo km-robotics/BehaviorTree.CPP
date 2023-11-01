@@ -848,6 +848,13 @@ TreeNode::Ptr XMLParser::PImpl::createNodeFromXML(const XMLElement* element,
       }
     }
 
+    // Get the XML content of the node.
+    const char* xml_content = element->GetText();
+    if (xml_content != nullptr)
+    {
+      config.xml_content = xml_content;
+    }
+
     new_node = factory.instantiateTreeNode(instance_name, type_ID, config);
   }
 
