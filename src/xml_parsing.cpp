@@ -1219,7 +1219,7 @@ std::string writeTreeDTD(const BehaviorTreeFactory& factory)
       }
       else if (port_info.type() == typeid(bool))
       {
-        type = "(true|false)";
+        type = "(0|1|true|false|TRUE|FALSE|True|False)";
       }
       else
       {
@@ -1244,7 +1244,7 @@ std::string writeTreeDTD(const BehaviorTreeFactory& factory)
   dtd << "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
   // dtd << "<!DOCTYPE root [\n";
-  dtd << "<!ELEMENT root (BehaviorTree|TreeNodesModel|include)*>\n";
+  dtd << "<!ELEMENT root (BehaviorTree*|TreeNodesModel?|include*)>\n";
   dtd << "<!ATTLIST root BTCPP_format CDATA #REQUIRED>\n";
   dtd << "<!ATTLIST root main_tree_to_execute CDATA #IMPLIED>\n";
   dtd << "\n";
@@ -1259,6 +1259,7 @@ std::string writeTreeDTD(const BehaviorTreeFactory& factory)
   dtd << "<!ELEMENT include EMPTY>\n";
   dtd << "<!ATTLIST include path CDATA #REQUIRED>\n";
   dtd << "<!ATTLIST include ros_pkg CDATA #IMPLIED>\n";
+  dtd << "\n";
 
   dtd << "<!ELEMENT Action (input_port*,output_port*,description?)>\n";
   dtd << "<!ATTLIST Action ID CDATA #REQUIRED>\n";
@@ -1278,6 +1279,8 @@ std::string writeTreeDTD(const BehaviorTreeFactory& factory)
 
   dtd << "<!ELEMENT SubTree (#PCDATA)>\n";
   dtd << "<!ATTLIST SubTree ID CDATA #REQUIRED>\n";
+  dtd << "<!ATTLIST SubTree name CDATA #IMPLIED>\n";
+  dtd << "<!ATTLIST SubTree _autoremap (0|1|true|false|TRUE|FALSE|True|False) \"false\">\n";
   dtd << "\n";
 
   dtd << "<!ELEMENT description (#PCDATA)>\n";
