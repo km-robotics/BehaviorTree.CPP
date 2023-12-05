@@ -121,7 +121,7 @@ struct ExprUnaryArithmetic : ExprBase
   Any evaluate(Environment& env) const override
   {
     auto rhs_v = rhs->evaluate(env);
-    if(rhs_v.isNumber())
+    if (rhs_v.isCastedAsNumber())
     {
       const double rv = rhs_v.cast<double>();
       switch (op)
@@ -208,7 +208,7 @@ struct ExprBinaryArithmetic : ExprBase
       throw RuntimeError(ErrorNotInit("right", opStr()));
     }
 
-    if(rhs_v.isNumber() && lhs_v.isNumber())
+    if (rhs_v.isCastedAsNumber() && lhs_v.isCastedAsNumber())
     {
       auto lv = lhs_v.cast<double>();
       auto rv = rhs_v.cast<double>();
@@ -391,7 +391,7 @@ struct ExprComparison : ExprBase
       }
       const Any False(0.0);
 
-      if(lhs_v.isNumber() && rhs_v.isNumber())
+      if (lhs_v.isCastedAsNumber() && rhs_v.isCastedAsNumber())
       {
         auto lv = lhs_v.cast<double>();
         auto rv = rhs_v.cast<double>();
@@ -409,7 +409,7 @@ struct ExprComparison : ExprBase
           return False;
         }
       }
-      else if(lhs_v.isString() && rhs_v.isNumber())
+      else if(lhs_v.isString() && rhs_v.isCastedAsNumber())
       {
         auto lv = StringToDouble(lhs_v, env);
         auto rv = rhs_v.cast<double>();
@@ -418,7 +418,7 @@ struct ExprComparison : ExprBase
           return False;
         }
       }
-      else if(lhs_v.isNumber() && rhs_v.isString())
+      else if(lhs_v.isCastedAsNumber() && rhs_v.isString())
       {
         auto lv = lhs_v.cast<double>();
         auto rv = StringToDouble(rhs_v, env);
@@ -610,9 +610,9 @@ struct ExprAssignment : ExprBase
     // temporary use
     Any temp_variable = *dst_ptr;
 
-    if(value.isNumber())
+    if (value.isCastedAsNumber())
     {
-      if(!temp_variable.isNumber())
+      if (!temp_variable.isCastedAsNumber())
       {
         throw RuntimeError("This Assignment operator can't be used "
                            "with a non-numeric type");
