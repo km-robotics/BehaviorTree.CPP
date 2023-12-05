@@ -150,6 +150,13 @@ public:
     return _original_type == typeid(T);
   }
 
+  bool isCastedAsNumber() const
+  {
+  return _any.type() == typeid(int64_t) ||
+         _any.type() == typeid(uint64_t) ||
+         _any.type() == typeid(double);
+  }
+
   // copy the value (casting into dst). We preserve the destination type.
   void copyInto(Any& dst) const;
 
@@ -368,7 +375,7 @@ inline void Any::copyInto(Any& dst) const
   {
     dst._any = _any;
   }
-  else if(isNumber() && dst.isNumber())
+  else if(isCastedAsNumber() && dst.isCastedAsNumber())
   {
     if(dst_type == typeid(int64_t))
     {
@@ -531,7 +538,7 @@ inline nonstd::expected<T, std::string> Any::tryCast() const
   // We will try first an int conversion
   if constexpr(std::is_enum_v<T>)
   {
-    if(isNumber())
+    if(isCastedAsNumber())
     {
       return static_cast<T>(convert<int>().value());
     }
