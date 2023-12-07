@@ -81,21 +81,45 @@ public:
 
   ~Any() = default;
 
-  Any(const Any& other) : _any(other._any), _original_type(other._original_type)
-  {}
+  Any(const Any& other)
+    : _any(other._any)
+    , _original_type(other._original_type)
+    , _is_number(other._is_number)
+    , _is_integral(other._is_integral)
+  {
+  }
 
   Any(Any&& other) noexcept
-    : _any(std::move(other._any)), _original_type(other._original_type)
-  {}
+    : _any(std::move(other._any))
+    , _original_type(other._original_type)
+    , _is_number(other._is_number)
+    , _is_integral(other._is_integral)
+  {
+  }
 
-  explicit Any(const double& value) : _any(value), _original_type(typeid(double))
-  {}
+  explicit Any(const double& value)
+    : _any(value)
+    , _original_type(typeid(double))
+    , _is_number(true)
+    , _is_integral(false)
+  {
+  }
 
-  explicit Any(const uint64_t& value) : _any(value), _original_type(typeid(uint64_t))
-  {}
+  explicit Any(const uint64_t& value)
+    : _any(value)
+    , _original_type(typeid(uint64_t))
+    , _is_number(true)
+    , _is_integral(true)
+  {
+  }
 
-  explicit Any(const float& value) : _any(double(value)), _original_type(typeid(float))
-  {}
+  explicit Any(const float& value)
+    : _any(double(value))
+    , _original_type(typeid(float))
+    , _is_number(true)
+    , _is_integral(false)
+  {
+  }
 
   explicit Any(const std::string& str)
     : _any(SafeAny::SimpleString(str)), _original_type(typeid(std::string))
@@ -116,8 +140,12 @@ public:
   // all the other integrals are casted to int64_t
   template <typename T>
   explicit Any(const T& value, EnableIntegral<T> = 0)
-    : _any(int64_t(value)), _original_type(typeid(T))
-  {}
+    : _any(int64_t(value))
+    , _original_type(typeid(T))
+    , _is_number(true)
+    , _is_integral(true)
+  {
+  }
 
   Any(const std::type_index& type) : _original_type(type)
   {}
@@ -134,9 +162,15 @@ public:
 
   Any& operator=(Any&& other) noexcept;
 
-  [[nodiscard]] bool isNumber() const;
+  [[nodiscard]] inline bool isNumber() const
+  {
+    return _is_number;
+  }
 
-  [[nodiscard]] bool isIntegral() const;
+  [[nodiscard]] inline bool isIntegral() const
+  {
+    return _is_integral;
+  }
 
   [[nodiscard]] bool isString() const
   {
@@ -217,6 +251,8 @@ public:
 private:
   linb::any _any;
   std::type_index _original_type;
+  bool _is_number = false;
+  bool _is_integral = false;
 
   //----------------------------
 
@@ -347,6 +383,8 @@ inline Any& Any::operator=(Any&& other) noexcept
 {
   this->_any = std::move(other._any);
   this->_original_type = other._original_type;
+  this->_is_number = other._is_number;
+  this->_is_integral = other._is_integral;
   return *this;
 }
 
