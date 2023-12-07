@@ -1263,18 +1263,22 @@ std::string writeTreeDTD(const BehaviorTreeFactory& factory)
 
   dtd << "<!ELEMENT Action (input_port*,output_port*,description?)>\n";
   dtd << "<!ATTLIST Action ID CDATA #REQUIRED>\n";
+  dtd << "<!ATTLIST Action editable (0|1|true|false|TRUE|FALSE|True|False) \"true\">\n";
   dtd << "\n";
 
   dtd << "<!ELEMENT Condition (input_port*,description?)*>\n";
   dtd << "<!ATTLIST Condition ID CDATA #REQUIRED>\n";
+  dtd << "<!ATTLIST Condition editable (0|1|true|false|TRUE|FALSE|True|False) \"true\">\n";
   dtd << "\n";
 
   dtd << "<!ELEMENT Control (input_port*,output_port*,description?)*>\n";
   dtd << "<!ATTLIST Control ID CDATA #REQUIRED>\n";
+  dtd << "<!ATTLIST Control editable (0|1|true|false|TRUE|FALSE|True|False) \"true\">\n";
   dtd << "\n";
 
   dtd << "<!ELEMENT Decorator (input_port*,output_port*,description?)*>\n";
   dtd << "<!ATTLIST Decorator ID CDATA #REQUIRED>\n";
+  dtd << "<!ATTLIST Decorator editable (0|1|true|false|TRUE|FALSE|True|False) \"true\">\n";
   dtd << "\n";
 
   dtd << "<!ELEMENT SubTree (#PCDATA)>\n";

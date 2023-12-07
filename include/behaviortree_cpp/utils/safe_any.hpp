@@ -129,9 +129,15 @@ public:
 
   Any& operator = (const Any& other);
 
-  bool isNumber() const;
+  bool isNumber() const
+  {
+    return _is_number;
+  }
 
-  bool isIntegral() const;
+  bool isIntegral() const
+  {
+    return _is_integral;
+  }
 
   bool isString() const
   {
