@@ -410,6 +410,7 @@ public:
   void setDefaultValue(const T& default_value)
   {
     default_value_ = Any(default_value);
+    has_dyn_default_value_ = false;
     try
     {
       default_value_str_ = BT::toStr(default_value);
@@ -418,15 +419,22 @@ public:
     {}
   }
 
+  void setDefaultValue(const Any&) {
+    has_dyn_default_value_ = true;
+  }
+
   [[nodiscard]] const std::string& description() const;
 
   [[nodiscard]] const Any& defaultValue() const;
 
   [[nodiscard]] const std::string& defaultValueString() const;
 
+  [[nodiscard]] bool hasDynamicDefaultValue() const {return has_dyn_default_value_;}
+
 private:
   PortDirection direction_;
   std::string description_;
+  bool has_dyn_default_value_ = false;
   Any default_value_;
   std::string default_value_str_;
 };
@@ -579,6 +587,24 @@ template <typename T = AnyTypeAllowed>
   }
   auto out = CreatePort<T>(PortDirection::OUTPUT, name, description);
   out.second.setDefaultValue(default_value);
+  return out;
+}
+
+template <typename T = AnyTypeAllowed>
+[[nodiscard]] inline std::pair<std::string, PortInfo>
+InputPort(StringView name, const Any& any, StringView description)
+{
+  auto out = CreatePort<T>(PortDirection::INPUT, name, description);
+  out.second.setDefaultValue(any);
+  return out;
+}
+
+template <typename T = AnyTypeAllowed>
+[[nodiscard]] inline std::pair<std::string, PortInfo>
+BidirectionalPort(StringView name, const Any& any, StringView description)
+{
+  auto out = CreatePort<T>(PortDirection::INOUT, name, description);
+  out.second.setDefaultValue(any);
   return out;
 }
 
