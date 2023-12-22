@@ -1072,6 +1072,10 @@ void addNodeModelToXML(const TreeNodeManifest& model, XMLDocument& doc,
     {
       port_element->SetAttribute("default", port_info.defaultValueString().c_str());
     }
+    if (port_info.hasDynamicDefaultValue())
+    {
+      port_element->SetAttribute("default", "");
+    }
 
     if(!port_info.description().empty())
     {
@@ -1474,6 +1478,10 @@ std::string writeTreeXSD(const BehaviorTreeFactory& factory)
       if(not port_info.defaultValue().empty())
       {
         attr->SetAttribute("default", port_info.defaultValueString().c_str());
+      }
+      else if (port_info.hasDynamicDefaultValue())
+      {
+        attr->SetAttribute("use", "optional");
       }
       else
       {
