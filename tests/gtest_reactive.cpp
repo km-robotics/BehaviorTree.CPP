@@ -114,7 +114,7 @@ TEST(Reactive, PreTickHooks)
     return NodeStatus::SUCCESS;
   };
 
-  tree.applyVisitor([&](TreeNode* node) -> void {
+  tree.applyNodeVisitor([&](TreeNode* node) -> void {
     if(auto dd = dynamic_cast<BT::AlwaysFailureNode*>(node)) {
       dd->setPreTickFunction(callback);
     }

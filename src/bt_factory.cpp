@@ -610,7 +610,7 @@ Blackboard::Ptr Tree::rootBlackboard()
   return {};
 }
 
-void Tree::applyVisitor(const std::function<void(const TreeNode*)>& visitor)
+void Tree::applyNodeVisitor(const std::function<void(const TreeNode*)>& visitor)
 {
   for (auto const& subtree : subtrees)
   {
@@ -619,12 +619,28 @@ void Tree::applyVisitor(const std::function<void(const TreeNode*)>& visitor)
   }
 }
 
-void Tree::applyVisitor(const std::function<void(TreeNode*)>& visitor)
+void Tree::applyNodeVisitor(const std::function<void(TreeNode*)>& visitor)
 {
   for (auto const& subtree : subtrees)
   {
     BT::applyRecursiveVisitor(static_cast<TreeNode*>(subtree->nodes.front().get()),
                               visitor);
+  }
+}
+
+void Tree::applySubtreeVisitor(const std::function<void(const Tree::Subtree*)>& visitor)
+{
+  for (auto const& subtree : subtrees)
+  {
+    visitor(subtree.get());
+  }
+}
+
+void Tree::applySubtreeVisitor(const std::function<void(Tree::Subtree*)>& visitor)
+{
+  for (auto& subtree : subtrees)
+  {
+    visitor(subtree.get());
   }
 }
 

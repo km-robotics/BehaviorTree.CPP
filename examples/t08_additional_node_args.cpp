@@ -118,7 +118,7 @@ int main()
     }
   };
   // apply the visitor to all the nodes of the tree
-  tree.applyVisitor(visitor);
+  tree.applyNodeVisitor(visitor);
 
   tree.tickWhileRunning();
 
