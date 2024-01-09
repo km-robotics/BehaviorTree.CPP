@@ -57,7 +57,7 @@ int main(int /*argc*/, char** /*argv*/)
     auto tree = factory.createTree("MainTree");
 
     std::cout << "----- Nodes fullPath() -------\n";
-    tree.applyVisitor(
+    tree.applyNodeVisitor(
         [](BT::TreeNode* node) { std::cout << node->fullPath() << std::endl; });
 
     std::cout << "\n------ Output (original) ------\n";
