@@ -56,7 +56,7 @@ int main()
 
   // Print the unique ID and the corresponding human readable path
   // Path is also expected to be unique.
-  tree.applyVisitor([&UID_to_path](BT::TreeNode* node) {
+  tree.applyNodeVisitor([&UID_to_path](BT::TreeNode* node) {
     UID_to_path[node->UID()] = node->fullPath();
     std::cout << node->UID() << " -> " << node->fullPath() << std::endl;
   });

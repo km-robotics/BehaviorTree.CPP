@@ -145,10 +145,16 @@ public:
   [[nodiscard]] Blackboard::Ptr rootBlackboard();
 
   //Call the visitor for each node of the tree.
-  void applyVisitor(const std::function<void(const TreeNode*)>& visitor);
+  void applyNodeVisitor(const std::function<void(const TreeNode*)>& visitor);
 
   //Call the visitor for each node of the tree.
-  void applyVisitor(const std::function<void(TreeNode*)>& visitor);
+  void applyNodeVisitor(const std::function<void(TreeNode*)>& visitor);
+
+  //Call the visitor for each subtree of the tree (including the main tree).
+  void applySubtreeVisitor(const std::function<void(const Subtree*)>& visitor);
+
+  //Call the visitor for each subtree of the tree (including the main tree).
+  void applySubtreeVisitor(const std::function<void(Subtree*)>& visitor);
 
   [[nodiscard]] uint16_t getUID();
 
