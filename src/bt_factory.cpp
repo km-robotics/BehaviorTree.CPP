@@ -610,12 +610,12 @@ Blackboard::Ptr Tree::rootBlackboard()
   return {};
 }
 
-void Tree::applyVisitor(const std::function<void(const TreeNode*)>& visitor) const
+void Tree::applyNodeVisitor(const std::function<void(const TreeNode*)>& visitor) const
 {
   BT::applyRecursiveVisitor(static_cast<const TreeNode*>(rootNode()), visitor);
 }
 
-void Tree::applyVisitor(const std::function<void(TreeNode*)>& visitor)
+void Tree::applyNodeVisitor(const std::function<void(TreeNode*)>& visitor)
 {
   BT::applyRecursiveVisitor(static_cast<TreeNode*>(rootNode()), visitor);
 }
@@ -624,6 +624,22 @@ uint16_t Tree::getUID()
 {
   auto uid = ++uid_counter_;
   return uid;
+}
+
+void Tree::applySubtreeVisitor(const std::function<void(const Tree::Subtree*)>& visitor)
+{
+  for (auto const& subtree : subtrees)
+  {
+    visitor(subtree.get());
+  }
+}
+
+void Tree::applySubtreeVisitor(const std::function<void(Tree::Subtree*)>& visitor)
+{
+  for (auto& subtree : subtrees)
+  {
+    visitor(subtree.get());
+  }
 }
 
 NodeStatus Tree::tickRoot(TickOption opt, std::chrono::milliseconds sleep_time)

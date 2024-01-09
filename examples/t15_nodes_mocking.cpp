@@ -56,7 +56,7 @@ int main(int argc, char** argv)
 
     std::cout << "----- Nodes fullPath() -------\n";
     // as a reminder, let's print the full names of all the nodes
-    tree.applyVisitor(
+    tree.applyNodeVisitor(
         [](BT::TreeNode* node) { std::cout << node->fullPath() << std::endl; });
 
     std::cout << "\n------ Output (original) ------\n";
