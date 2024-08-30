@@ -80,11 +80,11 @@ TEST(ParserTest, AnyTypes)
 
   result = Parse("true");
   EXPECT_TRUE(result.is_success());
-  EXPECT_EQ(result.value().cast<int>(), 1);
+  EXPECT_EQ(result.value().cast<bool>(), true);
 
   result = Parse("false");
   EXPECT_TRUE(result.is_success());
-  EXPECT_EQ(result.value().cast<int>(), 0);
+  EXPECT_EQ(result.value().cast<bool>(), false);
 }
 
 TEST(ParserTest, AnyTypes_Failing)
@@ -190,50 +190,93 @@ TEST(ParserTest, Equations)
   EXPECT_EQ(variables->getKeys().size(), prev_size);  // shouldn't increase
 
   // check comparisons
-  EXPECT_EQ(GetResult("x < y").cast<int>(), 1);
-  EXPECT_EQ(GetResult("y > x").cast<int>(), 1);
-  EXPECT_EQ(GetResult("y != x").cast<int>(), 1);
-  EXPECT_EQ(GetResult("y == x").cast<int>(), 0);
+  GetResult("x := 3; y := 5");
+  EXPECT_EQ(GetResult("x < y").type(), typeid(bool));
+  EXPECT_EQ(GetResult("y > x").type(), typeid(bool));
+  EXPECT_EQ(GetResult("x > y").type(), typeid(bool));
+  EXPECT_EQ(GetResult("y < x").type(), typeid(bool));
+  EXPECT_EQ(GetResult("y != x").type(), typeid(bool));
+  EXPECT_EQ(GetResult("y == x").type(), typeid(bool));
+  EXPECT_EQ(GetResult("x < y").cast<bool>(), true);
+  EXPECT_EQ(GetResult("y > x").cast<bool>(), true);
+  EXPECT_EQ(GetResult("x > y").cast<bool>(), false);
+  EXPECT_EQ(GetResult("y < x").cast<bool>(), false);
+  EXPECT_EQ(GetResult("y != x").cast<bool>(), true);
+  EXPECT_EQ(GetResult("y == x").cast<bool>(), false);
 
-  EXPECT_EQ(GetResult(" 'hello' == 'hello'").cast<int>(), 1);
-  EXPECT_EQ(GetResult(" 'hello' != 'world'").cast<int>(), 1);
-  EXPECT_EQ(GetResult(" 'hello' < 'world'").cast<int>(), 1);
-  EXPECT_EQ(GetResult(" 'hello' > 'world'").cast<int>(), 0);
-
-  EXPECT_NE(GetResult("x > y").cast<int>(), 1);
-  EXPECT_NE(GetResult("y < x").cast<int>(), 1);
-  EXPECT_NE(GetResult("y == x").cast<int>(), 1);
+  EXPECT_EQ(GetResult(" 'hello' == 'hello'").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" 'hello' != 'world'").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" 'hello' < 'world'").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" 'hello' > 'world'").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" 'hello' == 'hello'").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" 'hello' != 'world'").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" 'hello' < 'world'").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" 'hello' > 'world'").cast<bool>(), false);
 
   EXPECT_EQ(GetResult("y == x ? 'T' : 'F'").cast<std::string>(), "F");
   EXPECT_EQ(GetResult("y != x ? 'T' : 'F'").cast<std::string>(), "T");
 
-  EXPECT_EQ(GetResult("y == x").cast<int>(), 0);
-  EXPECT_EQ(GetResult("y == 5").cast<int>(), 1);
-  EXPECT_EQ(GetResult("x == 3").cast<int>(), 1);
+  EXPECT_EQ(GetResult("y == 5").type(), typeid(bool));
+  EXPECT_EQ(GetResult("x == 3").type(), typeid(bool));
+  EXPECT_EQ(GetResult("y == 5").cast<bool>(), true);
+  EXPECT_EQ(GetResult("x == 3").cast<bool>(), true);
 
-  EXPECT_EQ(GetResult(" true ").cast<int>(), 1);
+  EXPECT_EQ(GetResult(" true ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" true ").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" 'true' ").type(), typeid(std::string));
   EXPECT_EQ(GetResult(" 'true' ").cast<std::string>(), "true");
 
   GetResult("v1:= true; v2:= false");
-  EXPECT_EQ(variables->get<int>("v1"), 1);
-  EXPECT_EQ(variables->get<int>("v2"), 0);
+  EXPECT_EQ(variables->get<bool>("v1"), true);
+  EXPECT_EQ(variables->get<bool>("v2"), false);
 
-  EXPECT_EQ(GetResult(" v2 = true ").cast<int>(), 1);
-  EXPECT_EQ(GetResult(" v2 = !false ").cast<int>(), 1);
-  EXPECT_EQ(GetResult(" v2 = !v2 ").cast<int>(), 0);
+  EXPECT_EQ(GetResult(" v2 = true ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" v2 = !false ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" v2 = !v2 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" v2 = true ").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" v2 = !false ").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" v2 = !v2 ").cast<bool>(), false);
 
-  EXPECT_EQ(GetResult("v1 && v2").cast<int>(), 0);
-  EXPECT_EQ(GetResult("v1 || v2").cast<int>(), 1);
+  EXPECT_EQ(GetResult("v1 && v2").type(), typeid(bool));
+  EXPECT_EQ(GetResult("v1 || v2").type(), typeid(bool));
+  EXPECT_EQ(GetResult("v1 && v2").cast<bool>(), false);
+  EXPECT_EQ(GetResult("v1 || v2").cast<bool>(), true);
 
-  EXPECT_EQ(GetResult("(y == x) && (x == 3)").cast<int>(), 0);
-  EXPECT_EQ(GetResult("(y == x) || (x == 3)").cast<int>(), 1);
+  EXPECT_EQ(GetResult("(y == x) && (x == 3)").type(), typeid(bool));
+  EXPECT_EQ(GetResult("(y == x) || (x == 3)").type(), typeid(bool));
+  EXPECT_EQ(GetResult("(y == x) && (x == 3)").cast<bool>(), false);
+  EXPECT_EQ(GetResult("(y == x) || (x == 3)").cast<bool>(), true);
 
-  EXPECT_EQ(GetResult(" y == x  &&  x == 3 ").cast<int>(), 0);
-  EXPECT_EQ(GetResult(" y == x  ||  x == 3 ").cast<int>(), 1);
+  EXPECT_EQ(GetResult(" y == x  &&  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" y == x  ||  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" y == x  &&  x == 3 ").cast<bool>(), false);
+  EXPECT_EQ(GetResult(" y == x  ||  x == 3 ").cast<bool>(), true);
+
+  GetResult("v1 := true; v2 := false; x := 3");
+  EXPECT_EQ(GetResult(" v1  &&  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" v2  &&  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" true  &&  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" false  &&  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" v1  ||  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" v2  ||  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" true  ||  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" false  ||  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" !v1  &&  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" !v2  &&  x == 3 ").type(), typeid(bool));
+  EXPECT_EQ(GetResult(" v1  &&  x == 3 ").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" v2  &&  x == 3 ").cast<bool>(), false);
+  EXPECT_EQ(GetResult(" true  &&  x == 3 ").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" false  &&  x == 3 ").cast<bool>(), false);
+  EXPECT_EQ(GetResult(" v1  ||  x == 3 ").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" v2  ||  x == 3 ").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" true  ||  x == 3 ").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" false  ||  x == 3 ").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" !v1  &&  x == 3 ").cast<bool>(), false);
+  EXPECT_EQ(GetResult(" !v2  &&  x == 3 ").cast<bool>(), true);
 
   // we expect string to be casted to number
-  EXPECT_EQ(GetResult(" par1:='3'; par2:=3; par1==par2").cast<int>(), 1);
-  EXPECT_EQ(GetResult(" par1:='3'; par2:=4; par1!=par2").cast<int>(), 1);
+  EXPECT_EQ(GetResult(" par1:='3'; par2:=3; par1==par2").cast<bool>(), true);
+  EXPECT_EQ(GetResult(" par1:='3'; par2:=4; par1!=par2").cast<bool>(), true);
 }
 
 TEST(ParserTest, NotInitializedComparison)

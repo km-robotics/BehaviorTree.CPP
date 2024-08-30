@@ -139,12 +139,12 @@ struct BooleanLiteral : lexy::token_production
   struct True
   {
     static constexpr auto rule = LEXY_LIT("true");
-    static constexpr auto value = lexy::constant(1);
+    static constexpr auto value = lexy::constant(true);
   };
   struct False
   {
     static constexpr auto rule = LEXY_LIT("false");
-    static constexpr auto value = lexy::constant(0);
+    static constexpr auto value = lexy::constant(false);
   };
 
   static constexpr auto rule = dsl::p<True> | dsl::p<False>;
