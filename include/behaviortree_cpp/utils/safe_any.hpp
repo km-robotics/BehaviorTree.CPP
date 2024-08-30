@@ -146,6 +146,11 @@ public:
 
   Any& operator=(const Any& other);
 
+  [[nodiscard]] bool isBool() const
+  {
+    return _original_type == typeid(bool);
+  }
+
   [[nodiscard]] inline bool isNumber() const
   {
     return _is_number;
@@ -382,6 +387,10 @@ inline void Any::copyInto(Any& dst)
     {
       dst._any = cast<double>();
     }
+    else if (dst_type == typeid(bool))
+    {
+      dst._any = cast<bool>();
+    }
     else
     {
       throw std::runtime_error("Any::copyInto fails");
@@ -426,6 +435,14 @@ inline nonstd::expected<T, std::string> Any::stringToNumber() const
 
   const auto str = linb::any_cast<SafeAny::SimpleString>(_any);
 #if __cpp_lib_to_chars >= 201611L
+  if (str == "true")
+  {
+    return true;
+  }
+  if (str == "false")
+  {
+    return false;
+  }
   T out;
   auto [ptr, err] = std::from_chars(str.data(), str.data() + str.size(), out);
   if(err == std::errc())

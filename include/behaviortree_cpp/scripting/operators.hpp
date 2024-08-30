@@ -261,9 +261,9 @@ struct ExprBinaryArithmetic : ExprBase
           switch(op)
           {
             case logic_or:
-              return Any(static_cast<double>(lb || rb));
+              return Any(static_cast<bool>(lb || rb));
             case logic_and:
-              return Any(static_cast<double>(lb && rb));
+              return Any(static_cast<bool>(lb && rb));
             default: {
             }
           }
@@ -389,7 +389,7 @@ struct ExprComparison : ExprBase
       {
         throw RuntimeError(ErrorNotInit("right", opStr(ops[i])));
       }
-      const Any False(0.0);
+      const Any False(false);
 
       if (lhs_v.isCastedAsNumber() && rhs_v.isCastedAsNumber())
       {
@@ -436,7 +436,7 @@ struct ExprComparison : ExprBase
       }
       lhs_v = rhs_v;
     }
-    return Any(1.0);
+    return Any(true);
   }
 };
 
