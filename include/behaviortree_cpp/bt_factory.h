@@ -19,6 +19,7 @@
 #include <memory>
 #include <unordered_map>
 #include <set>
+#include <string>
 #include <vector>
 
 #include "behaviortree_cpp/contrib/magic_enum.hpp"
@@ -160,6 +161,9 @@ public:
   //Call the visitor for each subtree of the tree (including the main tree).
   void applySubtreeVisitor(const std::function<void(Subtree*)>& visitor);
 
+  /**
+   * @brief Return the next node UID.
+   */
   [[nodiscard]] uint16_t getUID();
 
   /// Get a list of nodes which fullPath() match a wildcard filter and
@@ -309,14 +313,17 @@ public:
      *
      *    BehaviorTreeFactory::createTree(tree_id)
      *
-     * where "tree_id" come from the XML attribute <BehaviorTree ID="tree_id">
+     * where "tree_id" come from the XML attribute <BehaviorTree ID="tree_id">.
+     *
+     * Return the attribute `main_tree_to_execute` if specified or if the file
+     * defines a single SubTree, or an empty string otherwise.
      *
      */
-  void registerBehaviorTreeFromFile(const std::filesystem::path& filename);
+  std::string registerBehaviorTreeFromFile(const std::filesystem::path& filename);
 
   /// Same of registerBehaviorTreeFromFile, but passing the XML text,
   /// instead of the filename.
-  void registerBehaviorTreeFromText(const std::string& xml_text);
+  std::string registerBehaviorTreeFromText(const std::string& xml_text);
 
   /// Returns the ID of the trees registered either with
   /// registerBehaviorTreeFromFile or registerBehaviorTreeFromText.
