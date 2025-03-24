@@ -723,7 +723,7 @@ uint16_t Tree::getUID()
   return uid;
 }
 
-void Tree::applySubtreeVisitor(const std::function<void(const Tree::Subtree*)>& visitor)
+void Tree::applySubtreeVisitor(const std::function<void(const Tree::Subtree*)>& visitor) const
 {
   for (auto const& subtree : subtrees)
   {
