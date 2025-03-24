@@ -156,7 +156,7 @@ public:
   void applyNodeVisitor(const std::function<void(TreeNode*)>& visitor);
 
   //Call the visitor for each subtree of the tree (including the main tree).
-  void applySubtreeVisitor(const std::function<void(const Subtree*)>& visitor);
+  void applySubtreeVisitor(const std::function<void(const Subtree*)>& visitor) const;
 
   //Call the visitor for each subtree of the tree (including the main tree).
   void applySubtreeVisitor(const std::function<void(Subtree*)>& visitor);
