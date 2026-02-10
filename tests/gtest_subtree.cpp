@@ -904,7 +904,7 @@ TEST(SubTree, UniqueSubTreeNames_WorksCorrectly)
 
   // Verify paths are unique
   std::set<std::string> all_paths;
-  tree.applyVisitor([&](TreeNode* node) {
+  tree.applyNodeVisitor([&](TreeNode* node) {
     EXPECT_EQ(all_paths.count(node->fullPath()), 0);
     all_paths.insert(node->fullPath());
   });
@@ -939,7 +939,7 @@ TEST(SubTree, NoNameAttribute_AutoGeneratesUniquePaths)
 
   // Verify paths are unique (auto-generated with UID)
   std::set<std::string> all_paths;
-  tree.applyVisitor([&](TreeNode* node) {
+  tree.applyNodeVisitor([&](TreeNode* node) {
     EXPECT_EQ(all_paths.count(node->fullPath()), 0);
     all_paths.insert(node->fullPath());
   });

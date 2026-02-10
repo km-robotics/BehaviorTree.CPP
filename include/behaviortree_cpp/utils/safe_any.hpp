@@ -393,17 +393,6 @@ inline Any& Any::operator=(Any&& other) noexcept
   return *this;
 }
 
-inline bool Any::isNumber() const
-{
-  return _any.type() == typeid(int64_t) || _any.type() == typeid(uint64_t) ||
-         _any.type() == typeid(double);
-}
-
-inline bool Any::isIntegral() const
-{
-  return _any.type() == typeid(int64_t) || _any.type() == typeid(uint64_t);
-}
-
 inline void Any::copyInto(Any& dst) const
 {
   if(dst.empty())
