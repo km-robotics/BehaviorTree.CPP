@@ -112,6 +112,7 @@ endif()
 # Handle dependencies
 
 find_package(Threads REQUIRED)
+find_package(TBB REQUIRED)  # TBB provides std::execution.
 
 if(BTCPP_GROOT_INTERFACE)
     if(USE_VENDORED_CPPZMQ)
@@ -223,6 +224,7 @@ message(STATUS "BTCPP_EXTRA_LIBRARIES: ${BTCPP_EXTRA_LIBRARIES}")
 target_link_libraries(${BTCPP_LIBRARY}
     PRIVATE
         Threads::Threads
+        TBB::tbb
         ${CMAKE_DL_LIBS}
         $<BUILD_INTERFACE:minitrace::minitrace>
         $<BUILD_INTERFACE:tinyxml2::tinyxml2>

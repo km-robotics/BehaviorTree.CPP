@@ -14,6 +14,7 @@
 
 #include <cstdio>
 #include <cstring>
+#include <execution>
 #include <functional>
 #include <iostream>
 #include <list>
@@ -1070,12 +1071,11 @@ void BT::XMLParser::PImpl::recursivelyCreateSubtree(
                        "' references itself (directly or indirectly)");
   }
   constexpr int kMaxNestingDepth = 256;
-  std::function<void(const TreeNode::Ptr&, Tree::Subtree::Ptr, std::string,
-                     const XMLElement*, int)>
-      recursiveStep;
 
+  auto subtree_nodes_mutex_ptr = std::make_shared<std::mutex>();
+  std::function<void(TreeNode::Ptr, Tree::Subtree::Ptr, std::string, const XMLElement*, int, std::shared_ptr<std::mutex>)> recursiveStep;
   recursiveStep = [&](TreeNode::Ptr parent_node, Tree::Subtree::Ptr subtree,
-                      std::string prefix, const XMLElement* element, int depth) {
+                      std::string prefix, const XMLElement* element, int depth, std::shared_ptr<std::mutex> mutex_ptr) {
     if(depth > kMaxNestingDepth)
     {
       throw RuntimeError("Maximum XML nesting depth exceeded during tree "
@@ -1085,16 +1085,26 @@ void BT::XMLParser::PImpl::recursivelyCreateSubtree(
     }
     // create the node
     auto node = createNodeFromXML(element, blackboard, parent_node, prefix, output_tree);
-    subtree->nodes.push_back(node);
+    {
+      std::scoped_lock lock(*mutex_ptr);
+      subtree->nodes.push_back(node);
+    }
 
     // common case: iterate through all children
     if(node->type() != NodeType::SUBTREE)
     {
-      for(auto child_element = element->FirstChildElement(); child_element != nullptr;
+      // std::for_each expects a random-access iterator, make a std::vector.
+      std::vector<const XMLElement*> children;
+      for (auto child_element = element->FirstChildElement(); child_element != nullptr;
           child_element = child_element->NextSiblingElement())
       {
-        recursiveStep(node, subtree, prefix, child_element, depth + 1);
+        children.push_back(child_element);
       }
+
+      std::for_each(std::execution::par, children.begin(), children.end(),
+          [&](const XMLElement* child_element) {
+            recursiveStep(node, subtree, prefix, child_element, depth + 1, mutex_ptr);
+          });
     }
     else  // special case: SubTreeNode
     {
@@ -1228,7 +1238,7 @@ void BT::XMLParser::PImpl::recursivelyCreateSubtree(
   new_tree->tree_ID = tree_ID;
   output_tree.subtrees.push_back(new_tree);
 
-  recursiveStep(root_node, new_tree, prefix_path, root_element, 0);
+  recursiveStep(root_node, new_tree, prefix_path, root_element, 0, subtree_nodes_mutex_ptr);
   ancestors.erase(tree_ID);
 }
 
