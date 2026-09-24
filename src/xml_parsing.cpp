@@ -456,6 +456,7 @@ std::string XMLParser::PImpl::loadDocImpl(XMLDocument* doc, bool add_includes)
   loadSubtreeModel(xml_root);
 
   // Register each BehaviorTree within the XML
+  std::string last_tree_name;
   for(auto bt_node = xml_root->FirstChildElement("BehaviorTree"); bt_node != nullptr;
       bt_node = bt_node->NextSiblingElement("BehaviorTree"))
   {
@@ -470,6 +471,7 @@ std::string XMLParser::PImpl::loadDocImpl(XMLDocument* doc, bool add_includes)
     }
 
     tree_roots[tree_name] = bt_node;
+    last_tree_name = tree_name;
   }
 
   // Get the name of the tree to run (either explicit or single tree).
@@ -480,8 +482,8 @@ std::string XMLParser::PImpl::loadDocImpl(XMLDocument* doc, bool add_includes)
   }
   else if(xml_root->FirstChild() == xml_root->LastChild())
   {
-    // special case: there is only one registered BT.
-    main_tree_to_execute = xml_root->FirstChild()->ToElement()->Attribute("ID");
+    // special case: there is only one registered BT (possibly without ID, then it got a generated name).
+    main_tree_to_execute = last_tree_name;
   }
   return main_tree_to_execute;
 }
