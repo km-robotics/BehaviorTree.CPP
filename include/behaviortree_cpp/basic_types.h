@@ -574,7 +574,9 @@ PortWithDefault(PortDirection direction, StringView name, const DefaultT& defaul
  *  @param default_value default value of the port, either type T of BlackboardKey
  *  @param description optional human-readable description
  */
-template <typename T = AnyTypeAllowed, typename DefaultT = T>
+// Not viable for a BT::Any argument, which selects the dynamic default value overload below.
+template <typename T = AnyTypeAllowed, typename DefaultT = T,
+          typename = std::enable_if_t<!std::is_same_v<DefaultT, Any>>>
 [[nodiscard]] inline std::pair<std::string, PortInfo>
 InputPort(StringView name, const DefaultT& default_value, StringView description)
 {
@@ -589,7 +591,9 @@ InputPort(StringView name, const DefaultT& default_value, StringView description
  *  @param default_value default value of the port, either type T of BlackboardKey
  *  @param description optional human-readable description
  */
-template <typename T = AnyTypeAllowed, typename DefaultT = T>
+// Not viable for a BT::Any argument, which selects the dynamic default value overload below.
+template <typename T = AnyTypeAllowed, typename DefaultT = T,
+          typename = std::enable_if_t<!std::is_same_v<DefaultT, Any>>>
 [[nodiscard]] inline std::pair<std::string, PortInfo>
 BidirectionalPort(StringView name, const DefaultT& default_value, StringView description)
 {
@@ -619,18 +623,24 @@ template <typename T = AnyTypeAllowed>
   return out;
 }
 
-template <typename T = AnyTypeAllowed>
+// Dynamic default value: only an actual BT::Any argument (e.g. `BT::Any{}`) selects this
+// overload; a bare `{}` keeps meaning "default-constructed T" (upstream issue #982).
+template <typename T = AnyTypeAllowed, typename AnyT,
+          std::enable_if_t<std::is_same_v<AnyT, Any>, int> = 0>
 [[nodiscard]] inline std::pair<std::string, PortInfo>
-InputPort(StringView name, const Any& any, StringView description)
+InputPort(StringView name, const AnyT& any, StringView description)
 {
   auto out = CreatePort<T>(PortDirection::INPUT, name, description);
   out.second.setDefaultValue(any);
   return out;
 }
 
-template <typename T = AnyTypeAllowed>
+// Dynamic default value: only an actual BT::Any argument (e.g. `BT::Any{}`) selects this
+// overload; a bare `{}` keeps meaning "default-constructed T" (upstream issue #982).
+template <typename T = AnyTypeAllowed, typename AnyT,
+          std::enable_if_t<std::is_same_v<AnyT, Any>, int> = 0>
 [[nodiscard]] inline std::pair<std::string, PortInfo>
-BidirectionalPort(StringView name, const Any& any, StringView description)
+BidirectionalPort(StringView name, const AnyT& any, StringView description)
 {
   auto out = CreatePort<T>(PortDirection::INOUT, name, description);
   out.second.setDefaultValue(any);
