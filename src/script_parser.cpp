@@ -200,7 +200,8 @@ private:
     if(tok.type == TokenType::Boolean)
     {
       advance();
-      double val = (tok.text == "true") ? 1.0 : 0.0;
+      // kmr: parse true/false as boolean (was double 1.0/0.0).
+      const bool val = (tok.text == "true");
       return std::make_shared<Ast::ExprLiteral>(Any(val));
     }
     // Integer literal
