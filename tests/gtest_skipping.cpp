@@ -1,4 +1,5 @@
 #include <gtest/gtest.h>
+#include <atomic>
 #include <string>
 #include "behaviortree_cpp/basic_types.h"
 #include "behaviortree_cpp/bt_factory.h"
@@ -215,4 +216,38 @@ TEST(SkippingLogic, WhileSkip)
 
   // counters[1] contains the number ot times TestB was ticked
   ASSERT_EQ(counters[1], 0);
+}
+
+TEST(SkippingLogic, ThreadedActionPreAndPostConditions)
+{
+  // ThreadedAction overrides executeTick(), it must still honor the
+  // pre-conditions and run the post-conditions.
+  BehaviorTreeFactory factory;
+  std::atomic_int ticks = 0;
+  factory.registerSimpleThreadedAction("Threaded", [&](BT::ThreadedAction&) {
+    ++ticks;
+    return NodeStatus::SUCCESS;
+  });
+
+  const std::string xml_text = R"(
+    <root BTCPP_format="4" >
+       <BehaviorTree ID="MainTree">
+          <Sequence>
+            <Script code=" done:=0 "/>
+            <Threaded _skipIf="true"/>
+            <Threaded _successIf="true" _onSuccess="done:=done+1"/>
+            <Threaded _onSuccess="done:=done+10"/>
+            <Fallback>
+              <Threaded _failureIf="true" _onFailure="done:=done+100"/>
+              <AlwaysSuccess/>
+            </Fallback>
+          </Sequence>
+       </BehaviorTree>
+    </root>)";
+
+  auto tree = factory.createTreeFromText(xml_text);
+  const auto status = tree.tickWhileRunning();
+  ASSERT_EQ(status, NodeStatus::SUCCESS);
+  ASSERT_EQ(ticks, 1);
+  ASSERT_EQ(tree.rootBlackboard()->get<int>("done"), 111);
 }

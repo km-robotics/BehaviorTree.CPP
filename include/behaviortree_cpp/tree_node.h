@@ -382,6 +382,7 @@ protected:
   friend class BehaviorTreeFactory;
   friend class DecoratorNode;
   friend class ControlNode;
+  friend class ThreadedAction;
   friend class Tree;
 
   [[nodiscard]] NodeConfig& config();
